@@ -7,9 +7,6 @@
 	 RGB values are passed back using via the array. Each value will range between 0 and 255
 */
 void HSBtoRGB(int hue, int sat, int bright, int* colors) {
-
-	// make sure that array has 3 or more elements
-    if(sizeof(colors)/sizeof(int *) < 3) return;
 	
 	// constrain all input variables to expected range
     hue = constrain(hue, 0, 360);
@@ -19,7 +16,6 @@ void HSBtoRGB(int hue, int sat, int bright, int* colors) {
     float sat_f = float(sat) / 100.0;
     float bright_f = float(bright) / 100.0;        
     int r, g, b;
-
     
     // If brightness is 0 then color is black (achromatic)
     // therefore, R, G and B values will all equal to 0
@@ -32,9 +28,9 @@ void HSBtoRGB(int hue, int sat, int bright, int* colors) {
 	// If saturation is 0 then color is gray (achromatic)
     // therefore, R, G and B values will all equal the current brightness
     if (sat <= 0) {      
-        colors[0] = bright_f * 255;
-        colors[1] = bright_f * 255;
-        colors[2] = bright_f * 255;
+        colors[0] = bright_f * 255.0;
+        colors[1] = bright_f * 255.0;
+        colors[2] = bright_f * 255.0;
     } 
     
     // if saturation and brightness are greater than 0 then calculate 
@@ -42,19 +38,36 @@ void HSBtoRGB(int hue, int sat, int bright, int* colors) {
     else {
         
         if (hue >= 0 && hue < 120) {
-            r = (bright_f * 255.0) * (1.0 - (float(hue) / 120.0));
-            g = (bright_f * 255.0) * (float(hue) / 120.0);
-            b = (bright_f * 255.0) * (1.0 - sat_f);           
+			float hue_primary = 1.0 - (float(hue) / 120.0);
+			float hue_secondary = float(hue) / 120.0;
+			float sat_primary = (1.0 - hue_primary) * (1.0 - sat_f);
+			float sat_secondary = (1.0 - hue_secondary) * (1.0 - sat_f);
+			float sat_tertiary = 1.0 - sat_f;
+			r = (bright_f * 255.0) * (hue_primary + sat_primary);
+			g = (bright_f * 255.0) * (hue_secondary + sat_secondary);
+			b = (bright_f * 255.0) * sat_tertiary;  
         }
+
         else if (hue >= 120 && hue < 240) {
-            r = (bright_f * 255.0) * (1.0 - sat_f);              
-            g = (bright_f * 255.0) * (1.0 - ((float(hue)-120.0) / 120.0));
-            b = (bright_f * 255.0) * ((float(hue) - 120.0) / 120.0);
+			float hue_primary = 1.0 - ((float(hue)-120.0) / 120.0);
+			float hue_secondary = (float(hue)-120.0) / 120.0;
+			float sat_primary = (1.0 - hue_primary) * (1.0 - sat_f);
+			float sat_secondary = (1.0 - hue_secondary) * (1.0 - sat_f);
+			float sat_tertiary = 1.0 - sat_f;
+			r = (bright_f * 255.0) * sat_tertiary;  
+			g = (bright_f * 255.0) * (hue_primary + sat_primary);
+			b = (bright_f * 255.0) * (hue_secondary + sat_secondary);
         }
+
         else if (hue >= 240 && hue <= 360) {
-            r = (bright_f * 255.0) * ((float(hue) - 240.0) / 120.0);
-            g = (bright_f * 255.0) * (1.0 - sat_f);              
-            b = (bright_f * 255.0) * (1.0 - ((float(hue) - 240.0) / 120.0));
+			float hue_primary = 1.0 - ((float(hue)-240.0) / 120.0);
+			float hue_secondary = (float(hue)-240.0) / 120.0;
+			float sat_primary = (1.0 - hue_primary) * (1.0 - sat_f);
+			float sat_secondary = (1.0 - hue_secondary) * (1.0 - sat_f);
+			float sat_tertiary = 1.0 - sat_f;
+			r = (bright_f * 255.0) * (hue_secondary + sat_secondary);
+			g = (bright_f * 255.0) * sat_tertiary;  
+			b = (bright_f * 255.0) * (hue_primary + sat_primary);
         }
         
         colors[0]=r;
@@ -64,6 +77,9 @@ void HSBtoRGB(int hue, int sat, int bright, int* colors) {
 }
 
 void HSBtoRGBfloat(float hue, float sat, float bright, int* colors) {
+	if (hue > 1) hue = 1.0;
+	if (sat > 1) sat = 1.0;
+	if (bright > 1) bright = 1.0;
     HSBtoRGB(hue*360, sat*100, bright*100, colors); 
 }
 
