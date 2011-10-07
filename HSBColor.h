@@ -13,8 +13,10 @@
 
 #include "WProgram.h"
 
-void HSBtoRGB(int, int, int, int*);
-void HSBtoRGBfloat(float, float, float, int*);
+#define H2R_MAX_RGB_val 255.0
+
+void H2R_HSBtoRGB(int, int, int, int*);
+void H2R_HSBtoRGBfloat(float, float, float, int*);
 
 #endif
 
