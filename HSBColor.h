@@ -11,7 +11,11 @@
 #ifndef HSBColor_h
 #define HSBColor_h
 
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
 #include "WProgram.h"
+#endif
 
 #define H2R_MAX_RGB_val 255.0
 
