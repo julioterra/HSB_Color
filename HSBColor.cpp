@@ -4,17 +4,14 @@
 /* HSB to RGB conversion function
 	 INPUT PARAMETERS: Hue values should range from 0 to 360, Saturation and Brightness values should range from 0 to 100
 					   Colors pointer should resolve to an array with 3 elements
-	 RGB values are passed back using via the array. Each value will range between 0 and 255
+	 RGB values are passed back using via the array. Each value will range between 0 and max_rgb_value
 */
-void H2R_HSBtoRGB(int hue, int sat, int bright, int* colors) {
+void H2R_HSBtoRGB_max(int hue, int sat, int bright, int max_rgb_val, int* colors) {
 		
 	// constrain all input variables to expected range
     hue = constrain(hue, 0, 360);
     sat = constrain(sat, 0, 100);
     bright = constrain(bright, 0, 100);
-
-	// define maximum value for RGB array elements
-	float max_rgb_val = H2R_MAX_RGB_val;
 
 	// convert saturation and brightness value to decimals and init r, g, b variables
     float sat_f = float(sat) / 100.0;
@@ -81,11 +78,31 @@ void H2R_HSBtoRGB(int hue, int sat, int bright, int* colors) {
     }
 }
 
-void H2R_HSBtoRGBfloat(float hue, float sat, float bright, int* colors) {
+
+/*
+INPUT PARAMETERS: Hue values should range from 0 to 360, Saturation and Brightness values should range from 0 to 100
+					   Colors pointer should resolve to an array with 3 elements
+	 RGB values are passed back using via the array. Each value will range between 0 and 255
+*/
+void H2R_HSBtoRGB(int hue, int sat, int bright, int* colors) {
+    H2R_HSBtoRGB_max(hue, sat, bright, H2R_MAX_RGB_val, colors);
+}
+
+
+/*
+INPUT PARAMETERS: Hue, Saturation and Brightness values should range from 0 to 1.
+					   Colors pointer should resolve to an array with 3 elements
+	 RGB values are passed back using via the array. Each value will range between 0 and 255
+*/
+void H2R_HSBtoRGBfloat_max(float hue, float sat, float bright, int max_rgb_val, int* colors) {
 	if (hue > 1) hue = 1.0;
 	if (sat > 1) sat = 1.0;
 	if (bright > 1) bright = 1.0;
-    H2R_HSBtoRGB(hue*360.0, sat*100.0, bright*100.0, colors); 
+    H2R_HSBtoRGB_max(hue*360.0, sat*100.0, bright*100.0, max_rgb_val, colors);
+}
+
+void H2R_HSBtoRGBfloat(float hue, float sat, float bright, int* colors) {
+    H2R_HSBtoRGBfloat_max(hue*360.0, sat*100.0, bright*100.0, H2R_MAX_RGB_val, colors);
 }
 
 
